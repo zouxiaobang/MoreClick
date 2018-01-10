@@ -14,6 +14,10 @@ import android.view.View;
  */
 
 public class MoreClickedProxy {
+    private static final int LONG_CLICK = 0;
+    private static final int SHORT_CLICK = 1;
+    private static final int DOUBLE_CLICK = 2;
+
 
     private int mDoubleClickTime = 500;
     private int mLongClickTime = 500;
@@ -66,7 +70,7 @@ public class MoreClickedProxy {
 
             if (!isDoubleClick){
                 //发送延迟信息,启动长按
-                mHandler.sendEmptyMessageDelayed(0, mLongClickTime);
+                mHandler.sendEmptyMessageDelayed(LONG_CLICK, mLongClickTime);
             }
             if (mClickCount == 1){
                 mFirstClick = System.currentTimeMillis();
@@ -78,17 +82,17 @@ public class MoreClickedProxy {
                     mClickCount = 0;
                     mFirstClick = 0;
 
-                    mHandler.removeMessages(0);
-                    mHandler.removeMessages(1);
-                    mHandler.sendEmptyMessage(2);
+                    mHandler.removeMessages(LONG_CLICK);
+                    mHandler.removeMessages(SHORT_CLICK);
+                    mHandler.sendEmptyMessage(DOUBLE_CLICK);
                 }
             }
         } else if (action == MotionEvent.ACTION_UP){
             long lastUpTime = System.currentTimeMillis();
             if (lastUpTime - mLastDownTime <= mDoubleClickTime){
-                mHandler.removeMessages(0);
+                mHandler.removeMessages(LONG_CLICK);
                 if (!isDoubleClick){
-                    mHandler.sendEmptyMessageDelayed(1, 500);
+                    mHandler.sendEmptyMessageDelayed(SHORT_CLICK, 500);
                 }
             } else {
                 mClickCount = 0;
